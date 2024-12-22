@@ -1,4 +1,8 @@
 import fitz  # PyMuPDF
+import matplotlib
+import pandas as pd
+import numpy as np
+from pprint import pprint
 
 def save_text_to_file(text, filename):
   """
@@ -34,7 +38,24 @@ def pdf_to_text(pdf_path):
 
     return text
 
+def get_tables(pdf_path):
+   document = fitz.open(pdf_path)
+   page = document[6]
+   tabs = page.find_tables()  # detect the tables
+   print(f"{len(tabs.tables)} found on {page}")
+
+   if tabs.tables:  # at least one table found?
+      pprint(tabs[0].extract())  # print content of first table
+   return tabs
+#    for i,tab in enumerate(tabs):  # iterate over all tables
+#         for cell in tab.header.cells:
+#             page.draw_rect(cell,color=fitz.pdfcolor["red"],width=0.3)
+#         page.draw_rect(tab.bbox,color=fitz.pdfcolor["green"])
+#         print(f"Table {i} column names: {tab.header.names}, external: {tab.header.external}")
+
+
 # Example usage
 pdf_path = 'C:/Users/admin/Desktop/Github/ebill-automation/BWP-January.pdf'  # Replace with your PDF file path
 text_content = pdf_to_text(pdf_path)
 save_text_to_file(text_content, "plaintext.txt")
+print(get_tables(pdf_path))
